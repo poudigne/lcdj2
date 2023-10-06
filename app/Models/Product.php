@@ -1,17 +1,18 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
-use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
-use Spatie\MediaLibrary\HasMedia\Interfaces\HasMediaConversions;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Image\Manipulations;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Product extends Model implements HasMedia, HasMediaConversions
+class Product extends Model implements HasMedia
 {
-    use HasMediaTrait, SoftDeletes;
+    use InteractsWithMedia, SoftDeletes;
     public function images() { 
     	return $this->hasMany("App/Images");
     }
@@ -26,11 +27,12 @@ class Product extends Model implements HasMedia, HasMediaConversions
         return $this->hasOne('App\Models\Inventory');
     }
 
-    public function registerMediaConversions()
+    public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('adminthumb')
-            ->setManipulations(['w' => 242, 'h' => 200])
-            ->performOnCollections('images');
+            ->fit(Manipulations::FIT_CROP, 242, 200)
+            ->nonQueued();
+            // ->performOnCollections('images');
     }
 
     /**

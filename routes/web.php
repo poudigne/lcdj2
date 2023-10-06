@@ -2,6 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\SaleController;
 use App\Models\User;
 
 /*
@@ -35,43 +42,96 @@ Route::get('/Evenement', ['as' => 'public.events', 'uses' => function () {
 // DASHBOARD 
 Route::group(['as' => 'dashboard::','middleware' => 'auth', 'prefix' => 'dashboard'], function () {
 
-    Route::get('/', ['middleware' => 'auth', 'uses' => 'DashboardController@index']);
-	Route::get('/home', ['as'=>'home', 'uses' => 'DashboardController@index']);
+    Route::get('/', [DashboardController::class, 'index'])
+        ->middleware('auth');
+	Route::get('/home', [DashboardController::class, 'index'])
+        ->name('home');
 	//Product
-	Route::get('/product/view/{id}', ['middleware' => 'auth', 'uses' => 'ProductController@show']);
-	Route::get('/product/create', ['as' => 'product.create', 'middleware' => 'auth', 'uses' => 'ProductController@create']);
-	Route::post('/product/create', ['as' => 'product.create.post', 'middleware' => 'auth', 'uses' => 'ProductController@store']);
-    Route::get('/product/edit/{id}', ['as' => 'product.edit', 'middleware' => 'auth', 'uses' => 'ProductController@edit']);
-    Route::post('/product/delete/media', ['as' => 'product.delete.media.post', 'middleware' => 'auth', 'uses' => 'ProductController@delete_media']);
-    Route::post('/product/edit/{id}', ['as' => 'product.edit.post', 'middleware' => 'auth', 'uses' => 'ProductController@update']);
-	Route::get('/product', ['as' => 'product.show', 'middleware' => 'auth', 'uses' => 'ProductController@index']);
-	Route::post("/product/delete", ['as' => 'product.delete.post', 'middleware' => 'auth', 'uses' => 'ProductController@multiple_delete']);
+	Route::get('/product/view/{id}', [ProductController::class, 'show'])
+        ->middleware('auth')
+        ->name('product.create');
+	Route::get('/product/create', [ProductController::class, 'create'])
+    ->name('product.create')
+    ->middleware('auth');
+	Route::post('/product/create', [ProductController::class, 'store'])
+    ->name('product.create.post')
+    ->middleware('auth');
+    Route::get('/product/edit/{id}', [ProductController::class, 'edit'])
+    ->name('product.edit')
+    ->middleware('auth');
+    Route::post('/product/delete/media', [ProductController::class, 'delete_media'])
+    ->name('product.delete.media.post')
+    ->middleware('auth');
+    Route::post('/product/edit/{id}', [ProductController::class, 'update'])
+    ->name('product.edit.post')
+    ->middleware('auth');
+	Route::get('/product', [ProductController::class, 'index'])
+    ->name('product.show')
+    ->middleware('auth');
+	Route::post("/product/delete", [ProductController::class, 'multiple_delete'])
+    ->name('product.delete.post')
+    ->middleware('auth');
 
-    Route::post("/product/publish", ['as' => 'product.publish.post', 'middleware' => 'auth', 'uses' => 'ProductController@multiple_publish']);
-    Route::post("/product/unpublish", ['as' => 'product.unpublish.post', 'middleware' => 'auth', 'uses' => 'ProductController@multiple_unpublish']);
-
+    Route::post("/product/publish",[ProductController::class, 'multiple_publish'])
+    ->name('product.publish.post')
+    ->middleware('auth');
+    Route::post("/product/unpublish", [ProductController::class, 'multiple_unpublish'])
+    ->name('product.unpublish.post')
+    ->middleware('auth');
 	//Category
-	Route::get('/category/create', ['as' => 'category.create', 'middleware' => 'auth', 'uses' => 'CategoryController@create']);
-	Route::post('/category/create', ['as' => 'category.create.post', 'middleware' => 'auth', 'uses' => 'CategoryController@store']);
-    Route::get('/category/edit/{id}', ['as' => 'category.edit', 'middleware' => 'auth', 'uses' => 'CategoryController@edit']);
-    Route::post('/category/edit/{id}', ['as' => 'category.edit.post', 'middleware' => 'auth', 'uses' => 'CategoryController@update']);
-	Route::get('/category', ['as' => 'category.show', 'middleware' => 'auth', 'uses' => 'CategoryController@index']);
-    Route::post("/category/delete", ['as' => 'category.delete.post', 'middleware' => 'auth', 'uses' => 'CategoryController@multiple_delete']);
+	Route::get('/category/create', [CategoryController::class, 'create'])
+    ->name('category.create')
+    ->middleware('auth');
+	Route::post('/category/create', [CategoryController::class, 'store'])
+    ->name('category.create.post')
+    ->middleware('auth');
+    Route::get('/category/edit/{id}', [CategoryController::class, 'edit'])
+    ->name('category.edit')
+    ->middleware('auth');
+    Route::post('/category/edit/{id}', [CategoryController::class, 'update'])
+    ->name('category.edit.post')
+    ->middleware('auth');
+	Route::get('/category', [CategoryController::class, 'index'])
+    ->name('category.show')
+    ->middleware('auth');
+    Route::post("/category/delete", [CategoryController::class, 'multiple_delete'])
+    ->name('category.delete.post')
+    ->middleware('auth');
 
-    Route::post("/category/publish", ['as' => 'category.publish.post', 'middleware' => 'auth', 'uses' => 'CategoryController@multiple_publish']);
-    Route::post("/category/unpublish", ['as' => 'category.unpublish.post', 'middleware' => 'auth', 'uses' => 'CategoryController@multiple_unpublish']);
+    Route::post("/category/publish", [CategoryController::class, 'multiple_publish'])
+    ->name('category.publish.post')
+    ->middleware('auth');
+    Route::post("/category/unpublish", [CategoryController::class, 'multiple_unpublish'])
+    ->name('category.unpublish.post')
+    ->middleware('auth');
 
 	// News
-	Route::get('/news', ['as' => 'news.show', 'middleware' => 'auth', 'uses' => 'NewsController@index']);
-    Route::get('/news/create', ['as' => 'news.create', 'middleware' => 'auth', 'uses' => 'NewsController@create']);
-    Route::post('/news/create', ['as' => 'news.create.post', 'middleware' => 'auth', 'uses' => 'NewsController@store']);
-    Route::get('/news/edit/{id}', ['as' => 'news.edit', 'middleware' => 'auth', 'uses' => 'NewsController@edit']);
-    Route::post('/news/edit/{id}', ['as' => 'news.edit.post', 'middleware' => 'auth', 'uses' => 'NewsController@update']);
+	Route::get('/news', [NewsController::class, 'index'])
+    ->name('news.show')
+    ->middleware('auth');
+    Route::get('/news/create', [NewsController::class, 'create'])
+    ->name('news.create')
+    ->middleware('auth');
+    Route::post('/news/create', [NewsController::class, 'store'])
+    ->name('news.create.post')
+    ->middleware('auth');
+    Route::get('/news/edit/{id}', [NewsController::class, 'edit'])
+    ->name('news.edit')
+    ->middleware('auth');
+    Route::post('/news/edit/{id}', [NewsController::class, 'update'])
+    ->name('news.edit.post')
+    ->middleware('auth');
 
-    Route::post("/news/delete", ['as' => 'news.delete.post', 'middleware' => 'auth', 'uses' => 'NewsController@multiple_delete']);
+    Route::post("/news/delete", [NewsController::class, 'multiple_delete'])
+    ->name('news.delete.post')
+    ->middleware('auth');
 
-    Route::post("/news/publish", ['as' => 'news.publish.post', 'middleware' => 'auth', 'uses' => 'NewsController@multiple_publish']);
-    Route::post("/news/unpublish", ['as' => 'news.unpublish.post', 'middleware' => 'auth', 'uses' => 'NewsController@multiple_unpublish']);
+    Route::post("/news/publish", [NewsController::class, 'multiple_publish'])
+    ->name('news.publish.post')
+    ->middleware('auth');
+    Route::post("/news/unpublish", [NewsController::class, 'multiple_unpublish'])
+    ->name('news.unpublish.post')
+    ->middleware('auth');
 
     // Inventory
 	Route::get('/inventory', [InventoryController::class, 'index'])
@@ -94,34 +154,59 @@ Route::group(['as' => 'dashboard::','middleware' => 'auth', 'prefix' => 'dashboa
             ->name('inventory.dec.post');
 
     // Event
-    Route::get('/event', ['as' => 'event.show', 'middleware' => 'auth', 'uses' => 'EventController@index']);
+    Route::get('/event', [EventController::class, 'index'])
+        ->middleware('auth')
+        ->name('event.show');
 
-    Route::post("/event/delete", ['as' => 'event.delete.post', 'middleware' => 'auth', 'uses' => 'EventController@multiple_delete']);
+    Route::post("/event/delete", [EventController::class, 'multiple_delete'])
+        ->middleware('auth')
+        ->name('event.delete.post');
 
-    Route::get('/event/create', ['as' => 'event.create', 'middleware' => 'auth', 'uses' => 'EventController@create']);
-    Route::post('/event/create', ['as' => 'event.create.post', 'middleware' => 'auth', 'uses' => 'EventController@store']);
+    Route::get('/event/create', [EventController::class, 'create'])
+        ->middleware('auth')
+        ->name('event.create');
+    Route::post('/event/create', [EventController::class, 'store'])
+        ->middleware('auth')
+        ->name('event.create.post');
 
-    Route::get('/event/edit/{id}', ['as' => 'event.edit', 'middleware' => 'auth', 'uses' => 'EventController@edit']);
-    Route::post('/event/edit/{id}', ['as' => 'event.edit.post', 'middleware' => 'auth', 'uses' => 'EventController@update']);
+    Route::get('/event/edit/{id}', [EventController::class, 'edit'])
+        ->middleware('auth')
+        ->name('event.edit');
+    Route::post('/event/edit/{id}', [EventController::class, 'update'])
+        ->middleware('auth')
+        ->name('event.edit.post');
 
-    Route::post("/event/publish", ['as' => 'event.publish.post', 'middleware' => 'auth', 'uses' => 'EventController@multiple_publish']);
-    Route::post("/event/unpublish", ['as' => 'event.unpublish.post', 'middleware' => 'auth', 'uses' => 'EventController@multiple_unpublish']);
+    Route::post("/event/publish", [EventController::class, 'multiple_publish'])
+        ->middleware('auth')
+        ->name('event.publish.post');
+    Route::post("/event/unpublish", [EventController::class, 'multiple_unpublish'])
+        ->middleware('auth')
+        ->name('event.unpublish.post');
 
 
     // receipt
-    Route::get('/sale', ['as' => 'sale.show', 'middleware' => 'auth', 'uses' => 'SaleController@index']);
-    Route::post("/sale/delete", ['as' => 'sale.delete.post', 'middleware' => 'auth', 'uses' => 'SaleController@multiple_delete']);
-    Route::post("/sale/delete", ['as' => 'sale.delete.post', 'middleware' => 'auth', 'uses' => 'SaleController@multiple_delete']);
-    Route::get('/sale/create', ['as' => 'sale.create', 'middleware' => 'auth', 'uses' => 'SaleController@create']);
-    Route::post('/sale/create', ['as' => 'sale.create.post', 'middleware' => 'auth', 'uses' => 'SaleController@store']);
-    Route::get('/sale/delete/{id}', ['as' => 'sale.delete', 'middleware' => 'auth', 'uses' => 'SaleController@destroy']);
+    Route::get('/sale', [SaleController::class, 'index'])
+        ->middleware('auth')
+        ->name('sale.show');
+    Route::post("/sale/delete", [SaleController::class, 'multiple_delete'])
+        ->middleware('auth')
+        ->name('sale.delete.post');
+    Route::get('/sale/create', [SaleController::class, 'create'])
+        ->middleware('auth')
+        ->name('sale.create');
+    Route::post('/sale/create', [SaleController::class, 'store'])
+        ->middleware('auth')
+        ->name('sale.create.post');
+    Route::get('/sale/delete/{id}', [SaleController::class, 'destroy'])
+        ->middleware('auth')
+        ->name('sale.delete');
 
 });
 
 Route::get("/CreateShenrokCredential", function(){
     return User::create([
-           'name' => 'Marc cantin',
-           'email' => 'shenrok@lcdj.com',
+           'name' => 'dummy user',
+           'email' => 'dummy@lcdj.com',
            'password' => bcrypt('test123'),
        ]);
 });
