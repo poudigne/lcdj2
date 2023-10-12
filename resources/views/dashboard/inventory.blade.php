@@ -4,7 +4,7 @@
     @foreach ($products as $set)
         <div class="col-sm-5 col-lg-3" style="display:flex; flex-wrap: wrap;">
             <div class="thumbnail" data-field-id="{{ $set->id }}">
-                <img data-holder-rendered="true" src="@if ($set->getMedia()->first() != null){{ $set->getMedia()->first()->getUrl() }} @endif" style="height: 200px; width: 100%; display: block;" data-src="holder.js/100%x200" alt="">
+                <img data-holder-rendered="true" src="@if ($set->getFirstMedia('images') != null){{ str_replace('localhost','localhost:8000', $set->getFirstMedia('images')->getUrl()) }} @endif" style="height: 200px; width: 100%; display: block;" data-src="holder.js/100%x200" alt="">
                 <div class="caption">
                     <h4>{{ $set->title }}</h4>
                     <div style="height: 25px;">

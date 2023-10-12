@@ -62,20 +62,23 @@ class ProductController extends Controller
         $product->sale_price = $request->get('product_saleprice');
         $product->save();
 
+
         if ($request->get('product_categories') != null){
             foreach ($request->get('product_categories') as $category_id) {
                 $product->categories()->attach($category_id);
             }
         }
 
-        $files = $request->file('product_images');
-        $count = 0;
-        foreach($files as $file) {
-            if ($file == null)
-                continue;
-            $product->addMedia($file)->usingFileName($product->id. "_" . $count . "." . $file->getClientOriginalExtension())->toCollection('images');
-            $count++;
-        }
+        $files = $request->product_images;
+            $count = 0;
+            
+            foreach($files as $file) {
+                if ($file == null)
+                    continue;
+                $imageName = $product->id. "_" . $count . "." . $file->getClientOriginalExtension();
+                $product->addMedia($file)->usingFileName($imageName)->toMediaCollection('images');
+                $count++;
+            }
 
 
         Session::flash('flash_message', 'Product successfully added!');
@@ -94,7 +97,7 @@ class ProductController extends Controller
         $output = "";
         $product = Product::find($id);
         foreach($product->getMedia() as $media) {
-            $output = "<img src='" . $media->getUrl() . "' /><br />";
+            $output = "<img src='" . $media->getPath() . "' /><br />";
         }
 
         return $output;
@@ -143,13 +146,16 @@ class ProductController extends Controller
                 $product->categories()->attach($category_id);
             }
         }
+        
         $files = $request->file('product_images');
-        $count = 0;
-        foreach($files as $file) {
-            if ($file == null)
-                continue;
-            $product->addMedia($file)->usingFileName($product->id. "_" . $count . "." . $file->getClientOriginalExtension())->toCollection('images');
-            $count++;
+        if ($files != null){
+            $count = 0;
+            foreach($files as $file) {
+                if ($file == null)
+                    continue;
+                $product->addMedia($file)->usingFileName($product->id. "_" . $count . "." . $file->getClientOriginalExtension())->toCollection('images');
+                $count++;
+            }
         }
 
         Session::flash('flash_message', 'Product successfully edited!');
